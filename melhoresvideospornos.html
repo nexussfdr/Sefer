@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sefer</title>
+<style>
+html, body {
+  min-height: 100vh;
+  margin: 0; padding: 0;
+  background: #0a142c;
+  font-family: 'Poppins', Arial, sans-serif;
+  color: #e0e7f1;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  width: 100vw;
+}
+body {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+}
+#cparticles {
+  position: fixed; top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none; z-index: 0;
+}
+.container {
+  z-index: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  width: 100vw; min-height: 100vh;
+}
+.title { font-size: 2.7rem; color: #00bfff; text-shadow: 0 0 18px #00bfffDD; font-weight: bold; text-align: center; margin-top: 60px; margin-bottom: 0.8rem; width: 100%; }
+.subtitle { color: #fff; font-size: 1.25rem; font-weight: bold; text-align: center; margin-bottom: 2.2rem; width: 100%; text-shadow: 0 0 10px #00bfff80; margin-top: 0.5em; }
+.cards-vert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 22px; background: rgba(12,24,45,0.80); border-radius: 20px; box-shadow: 0 0 50px #00bfff19; padding: 30px 18px; max-width: 650px; margin: 0 auto 36px auto; width: 100%; box-sizing: border-box; }
+.video-card { background: rgba(15, 50, 90, 0.73); border-radius: 16px; border: 1.5px solid #00bfff88; box-shadow: 0 0 22px #00bfff60; padding: 18px 12px; min-height: 210px; color: #00bfff; font-weight: bold; font-size: 1.17rem; transition: transform 0.22s, box-shadow 0.22s; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; opacity: 0.97; cursor: pointer; }
+.video-card:hover { transform: translateY(-7px) scale(1.07); box-shadow: 0 0 38px #00d4ffba; }
+.video-thumb { object-fit:cover; width:100%; height:140px; border-radius:9px; margin-bottom:12px;}
+.video-title { font-size:1.14em;color:#00bfff;font-weight:600; }
+.video-desc { font-size:0.97em; color:#e0e7f1; margin:8px 0 0 0;}
+.category-title { text-align: center; color: #00bfff; font-size: 1.5em; font-weight: 600; margin-bottom: 24px; width:100%; }
+footer { text-align: center; margin-top: 40px; font-size: 1.11rem; font-weight: bold; color: #fff; width: 100%; }
+/* Menu hambúrguer estilizado */
+#hamburger-root { z-index: 99; }
+#hamburger-btn {
+  position: fixed; top: 22px; right: 28px; width: 54px; height: 54px;
+  background: rgba(13,27,48,0.96); border: none; border-radius: 19px;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  cursor: pointer; z-index: 100; transition: background 0.18s;
+}
+#hamburger-btn:focus { outline: 3px solid #00bfffbb; }
+.hamb-bar {
+  width: 30px; height: 4px; margin: 6px 0; border-radius: 2px;
+  background: #00a1de; transition: all 0.25s;
+}
+#hamburger-btn.active .hamb-bar:nth-child(1) {
+  transform: rotate(45deg) translate(8px,8px); background: #00eaff;
+}
+#hamburger-btn.active .hamb-bar:nth-child(2) { opacity: 0; }
+#hamburger-btn.active .hamb-bar:nth-child(3) {
+  transform: rotate(-45deg) translate(8px,-8px); background: #00eaff;
+}
+#side-menu {
+  position: fixed; top: 74px; right: 28px; width: 240px; height: calc(100vh - 74px);
+  background: linear-gradient(135deg,#001c37 20%,#003969cc 85%);
+  border-radius: 22px; box-shadow: 0 0 36px #005783bb; padding: 30px 24px;
+  opacity: 0; pointer-events: none; transform: translateY(-10px) scale(0.97);
+  transition: opacity 0.23s ease, transform 0.23s ease, box-shadow 0.23s ease;
+  z-index: 95; display: flex; flex-direction: column; backdrop-filter: blur(8px);
+  border: 1px solid #0081d129;
+}
+#side-menu.active { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+#side-menu ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 28px; }
+#side-menu li { padding: 0; }
+#side-menu a, #side-menu .menu-btn {
+  display: flex; align-items: center; gap: 7px; font-size: 1.15rem; font-weight: 600;
+  padding: 16px 20px; background: linear-gradient(90deg,#004a81 40%,#00a7ffbb 85%);
+  border-radius: 18px; color: #cff3ff; box-shadow: 0 6px 22px rgba(0,131,191,0.42);
+  border: none; cursor: pointer; transition: background-color 0.22s ease, color 0.3s ease, transform 0.25s ease, box-shadow 0.25s;
+}
+#side-menu a:hover, #side-menu .menu-btn:hover, #side-menu a:focus, #side-menu .menu-btn:focus {
+  background: linear-gradient(90deg,#00cfff 65%,#0063a0 90%);
+  color: #002b49; outline: none; transform: scale(1.08);
+}
+#side-menu svg {
+  fill: #00bfff; height: 22px; width: 22px; flex-shrink: 0;
+}
+/* Diálogo apoiadores */
+#social-dialog {
+  position: fixed; top: 74px; right: 280px; min-width: 220px; max-width: 320px; padding: 30px 22px;
+  background: rgba(13,27,62,0.97); color: #e0f7ff; border: none; border-radius: 24px;
+  box-shadow: 0 0 32px #00caffcc; animation: fadein 0.25s; z-index: 100; font-size: 1rem;
+}
+#social-dialog h3 { margin-top: 0; font-size: 1.3rem; margin-bottom: 14px; color: #00caff; font-weight: 700; }
+#social-dialog a {
+  display: block; margin-bottom: 14px; font-weight: 600; text-decoration: none; background: #002844;
+  border-radius: 10px; padding: 10px 15px; color: #00caff; box-shadow: 0 0 20px #00aaff33;
+  transition: background 0.2s;
+}
+#social-dialog a:hover { background: #0089ff45; }
+#social-dialog button {
+  margin-top: 12px; border: none; border-radius: 16px; padding: 8px 22px; background: #00bfff;
+  color: white; font-weight: 600; cursor: pointer; box-shadow: 0 0 10px #00aaffcc; font-size: 1rem;
+}
+@keyframes fadein {
+  from { opacity: 0; transform: scale(0.88); }
+  to { opacity: 1; transform: scale(1); }
+}
+</style>
+</head>
+<body>
+<!-- Menu hambúrguer e lateral, com o diálogo de apoiadores -->
+<div id="hamburger-root">
+  <button id="hamburger-btn" aria-label="Abrir menu" aria-expanded="false" aria-controls="side-menu">
+    <span class="hamb-bar"></span>
+    <span class="hamb-bar"></span>
+    <span class="hamb-bar"></span>
+  </button>
+  <nav id="side-menu" aria-hidden="true" role="navigation">
+    <ul>
+      <li><a href="index.html" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 12l18-12v24z"/></svg>Voltar para tela inicial</a></li>
+      <li><button id="suporte-btn" class="menu-btn" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 3h20v18H2z"/></svg>Suporte</button></li>
+      <li><button id="apoiadores-btn" class="menu-btn" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2a10 10 0 0 1 0 20 10 10 0 0 1 0-20z"/></svg>Apoiadores</button></li>
+    </ul>
+  </nav>
+  <dialog id="social-dialog" role="dialog" aria-modal="true" aria-labelledby="social-dialog-title" tabindex="-1">
+    <h3 id="social-dialog-title">Acesse as redes da Nexus e apoiadores</h3>
+    <a href="https://t.me/NexusLock" target="_blank" rel="noopener" tabindex="0">Canal Telegram da Nexus</a>
+    <a href="https://www.instagram.com/hypexsolos?igsh=dng5ZWtrcHdmY2Vq" target="_blank" rel="noopener" tabindex="0">Hypex - Instagram</a>
+    <a href="https://www.instagram.com/void._vamp?igsh=MmY4eWhlOGF4cjFl" target="_blank" rel="noopener" tabindex="0">void - Instagram</a>
+    <button onclick="document.getElementById('social-dialog').close()" tabindex="0">Fechar</button>
+  </dialog>
+</div>
+
+<!-- Fundo partículas -->
+<canvas id="cparticles"></canvas>
+
+<!-- Conteúdo principal -->
+<div class="container">
+  <h1 class="title">Sefer</h1>
+  <h2 class="subtitle">melhores vídeos pornográficos</h2>
+
+  <!-- Primeira Categoria -->
+  <section style="width:100%;max-width:650px;margin:0 auto 42px auto;">
+    <div class="category-title">animes enthais</div>
+    <div class="cards-vert-grid">
+      <a href="https://4br.me/g3lBWd" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card1.jpg" alt="Capa Card 1" class="video-thumb">
+        <div class="video-title">Darknes tarada e pega na floresta nua.</div>
+        <div class="video-desc">Nota: 9.8 – Surpreendente!</div>
+      </a>
+      <a href="https://4br.me/PDtt" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card2.jpg" alt="Capa Card 2" class="video-thumb">
+        <div class="video-title">Garota de Genshin impact enlouquece de tesão no pau.</div>
+        <div class="video-desc">Nota: 9.7 – Altamente recomendado!</div>
+      </a>
+      <a href="https://4br.me/wat662rN6" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card3.jpg" alt="Capa Card 3" class="video-thumb">
+        <div class="video-title">Garotas loucas de ceita e loucas por sexo pegam o pequeno Garoto a força.</div>
+        <div class="video-desc">Nota: 9.85 – Imperdível!</div>
+      </a>
+      <a href="https://4br.me/PJOR" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card4.jpg" alt="Capa Card 4" class="video-thumb">
+        <div class="video-title">Garota é pega de surpresa e está pronta para o próximo round.</div>
+        <div class="video-desc">Nota: 9.9 – Extremo prazer!</div>
+      </a>
+      <a href="https://4br.me/wizC6huw" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card5.jpg" alt="Capa Card 5" class="video-thumb">
+        <div class="video-title">Garota morena não deixa o protagonista descansar e senta violentamente sobre ele.</div>
+        <div class="video-desc">Nota: 9.92 – Muito intenso!</div>
+      </a>
+      <a href="https://4br.me/h5pZAIHmxi" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card6.jpg" alt="Capa Card 6" class="video-thumb">
+        <div class="video-title">Vaca safada com curvas engole o pau como se fosse água.</div>
+        <div class="video-desc">Nota: 9.89 – Fenomenal!</div>
+      </a>
+      <a href="https://4br.me/uj50pDX4V" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card7.jpg" alt="Capa Card 7" class="video-thumb">
+        <div class="video-title">Deusa da água é fodida em seu santuário.</div>
+        <div class="video-desc">Nota: 9.87 – Prazer divino!</div>
+      </a>
+      <a href="https://4br.me/DPpOHn4mZ" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card8.jpg" alt="Capa Card 8" class="video-thumb">
+        <div class="video-title">Duas garotas são pegas nuas na floresta e têm o que merecem.</div>
+        <div class="video-desc">Nota: 9.73 – Duplo prazer!</div>
+      </a>
+      <a href="https://4br.me/0w0XCFVsV" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card9.jpg" alt="Capa Card 9" class="video-thumb">
+        <div class="video-title">Demônia tenta pegar o protagonista da moto-serra, mas acaba sendo comida por ele em um beco.</div>
+        <div class="video-desc">Nota: 9.95 – Surreal!</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Segunda Categoria -->
+  <section style="width:100%;max-width:650px;margin:0 auto 42px auto;">
+    <div class="category-title">sexos públicos com orgasmos extremos</div>
+    <div class="cards-vert-grid">
+      <a href="https://4br.me/SVlVkMn" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card10.jpg" alt="Capa Card 10" class="video-thumb">
+        <div class="video-title">Transa no parque ao ar livre.</div>
+        <div class="video-desc">Nota: 10 – O melhor!</div>
+      </a>
+      <a href="https://4br.me/oFvcA65" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card11.jpg" alt="Capa Card 11" class="video-thumb">
+        <div class="video-title">Prince indígena carismática fode ao ar livre enquanto geme feito louca.</div>
+        <div class="video-desc">Nota: 9.99 – Fenomenal!</div>
+      </a>
+      <a href="https://4br.me/qELcl1h" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card12.jpg" alt="Capa Card 12" class="video-thumb">
+        <div class="video-title">Garota de trança deixa seu cuzinho e sua buceta livre ao público e é fodida ao ar livre.</div>
+        <div class="video-desc">Nota: 9.97 – No topo!</div>
+      </a>
+      <a href="https://4br.me/iNxBvgwDn" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card13.jpg" alt="Capa Card 13" class="video-thumb">
+        <div class="video-title">Garota de trança transa em público enquanto goza e geme loucamente.</div>
+        <div class="video-desc">Nota: 9.98 – Muito gostoso!</div>
+      </a>
+      <a href="https://4br.me/yR0VP8a" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card14.jpg" alt="Capa Card 14" class="video-thumb">
+        <div class="video-title">Garota louca de tesão não se aguenta e bate uma sirica pesada no banco do parque abandonado.</div>
+        <div class="video-desc">Nota: 9.95 – Impagável!</div>
+      </a>
+      <a href="https://4br.me/xDWWj3EK" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card15.jpg" alt="Capa Card 15" class="video-thumb">
+        <div class="video-title">Mulher transa no meio da rua, enquanto grita gozando e gemendo de tesão.</div>
+        <div class="video-desc">Nota: 9.98 – Ardente!</div>
+      </a>
+      <a href="https://4br.me/KvRkzU7uF3" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card16.jpg" alt="Capa Card 16" class="video-thumb">
+        <div class="video-title">Mulher bate sirica no meio da rua, de noite na rua noturna.</div>
+        <div class="video-desc">Nota: 9.93 – Instigante!</div>
+      </a>
+      <a href="https://4br.me/HLSh2n" class="video-card" target="_blank" rel="noopener">
+        <img src="img+18/card17.jpg" alt="Capa Card 17" class="video-thumb">
+        <div class="video-title">Garota bate sirica à beira mar, no meio da rua.</div>
+        <div class="video-desc">Nota: 9.97 – Delicioso!</div>
+      </a>
+    </div>
+  </section>
+
+  <footer>desenvolvido pela associação Nexus</footer>
+</div>
+
+<!-- Scripts -->
+<script>
+  // Partículas
+  const canvas = document.getElementById('cparticles');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  class Particle {
+    constructor() {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+      this.radius = Math.random() * 10 + 14;
+      this.speedX = (Math.random() - 0.5) * 0.15;
+      this.speedY = (Math.random() - 0.5) * 0.13;
+      this.opacity = Math.random() * 0.23 + 0.18;
+    }
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      if(this.x < -this.radius) this.x = width + this.radius;
+      if(this.x > width + this.radius) this.x = -this.radius;
+      if(this.y < -this.radius) this.y = height + this.radius;
+      if(this.y > height + this.radius) this.y = -this.radius;
+    }
+    draw() {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+      const g = ctx.createRadialGradient(this.x, this.y, 2, this.x, this.y, this.radius);
+      g.addColorStop(0, `rgba(0,191,255,${this.opacity + 0.11})`);
+      g.addColorStop(0.35, `rgba(0,191,255,${this.opacity * 0.37})`);
+      g.addColorStop(1, `rgba(0,191,255,0)`);
+      ctx.fillStyle = g;
+      ctx.shadowBlur = 28;
+      ctx.shadowColor = `rgba(0,191,255,0.23)`;
+      ctx.globalAlpha = 0.94;
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+  let particles = [];
+  function initParticles() {
+    particles = [];
+    for(let i=0; i<38; i++) { particles.push(new Particle()); }
+  }
+  initParticles();
+  function animate() {
+    ctx.clearRect(0,0,width,height);
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  // Menu hambúrguer
+  const hamBtn = document.getElementById('hamburger-btn');
+  const sideMenu = document.getElementById('side-menu');
+  const socialDialog = document.getElementById('social-dialog');
+
+  hamBtn.onclick = () => {
+    hamBtn.classList.toggle('active');
+    if(!sideMenu.classList.contains('active')){
+      sideMenu.classList.add('active');
+      sideMenu.setAttribute('aria-hidden','false');
+    } else {
+      sideMenu.classList.remove('active');
+      sideMenu.setAttribute('aria-hidden','true');
+      socialDialog.close();
+    }
+  };
+  document.getElementById('suporte-btn').onclick = ()=> {
+    window.location.href = "mailto:associacaonexugrup@gamil.com";
+  };
+  document.getElementById('apoiadores-btn').onclick = () => {
+    socialDialog.showModal();
+  };
+  document.addEventListener('click', (e) => {
+    if(!sideMenu.contains(e.target) && !hamBtn.contains(e.target)){
+      if(sideMenu.classList.contains('active')){
+        sideMenu.classList.remove('active');
+        sideMenu.setAttribute('aria-hidden','true');
+        hamBtn.classList.remove('active');
+        socialDialog.close();
+      }
+    }
+  });
+</script>
+</body>
+</html>
