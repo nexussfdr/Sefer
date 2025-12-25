@@ -1,48 +1,407 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sefer</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SEFER - Tela Inicial</title>
+<style>
+html, body {
+  min-height: 100vh; margin: 0; padding: 0;
+  background: #0a142c; font-family: 'Poppins', Arial, sans-serif;
+  color: #e0e7f1; box-sizing: border-box;
+  width: 100vw; overflow-x: hidden;
+}
+body {
+  min-width: 100vw; min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+}
+#cparticles {
+  position: fixed; top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none; z-index: 0;
+}
+.container {
+  z-index: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  width: 100vw; min-height: 100vh;
+}
+.title {
+  font-size: 2.7rem; color: #00bfff;
+  text-shadow: 0 0 18px #00bfffDD;
+  font-weight: bold; text-align: center;
+  margin-top: 60px; margin-bottom: 0.8rem; width: 100%;
+  z-index: 2;
+}
+.subtitle {
+  color: #8ec1ff; font-size: 1.15rem; font-weight: 400;
+  text-align: center; margin-bottom: 2.2rem; margin-top: 0;
+  width: 100%; z-index: 2;
+}
+
+/* GRID DOS CARDS */
+.cards-vert-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 24px;
+  align-items: stretch;
+  justify-content: center;
+  background: rgba(6,15,32,0.9);
+  border-radius: 20px;
+  box-shadow: 0 0 32px rgba(0,191,255,0.18);
+  padding: 28px 18px;
+  max-width: 520px;
+  margin: 0 auto 32px auto;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 2;
+}
+
+/* CARD PROFISSIONAL COM ÍCONE AO LADO */
+.card {
+  background: rgba(4,25,55,0.96);
+  border-radius: 16px;
+  border: 1.5px solid rgba(0,191,255,0.55);
+  box-shadow: 0 0 22px rgba(0,191,255,0.55);
+  padding: 14px 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  color: #e5f4ff;
+  text-decoration: none;
+  min-height: 110px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 38px rgba(0,212,255,0.9);
+  border-color: #00e0ff;
+  background: rgba(8,24,50,0.98);
+}
+
+/* ÍCONE AO LADO - CORRIGIDO */
+.card-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #0b203f;
+  box-shadow: 0 0 10px rgba(0,191,255,0.5);
+  border: 1.5px solid rgba(0,191,255,0.75);
+}
+
+/* TEXTO AO LADO DO ÍCONE */
+.card-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+}
+.card-title {
+  text-align: left;
+  font-size: 0.98rem;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: #e9f6ff;
+  overflow-wrap: break-word;
+}
+.card-desc {
+  text-align: left;
+  font-size: 0.86rem;
+  color: #a8d6ff;
+  margin: 0;
+}
+
+footer {
+  text-align: center; margin-top: 40px;
+  color: #fff; font-weight: bold; font-size: 1.11rem;
+  width: 100vw; z-index: 2;
+}
+
+/* menu hambúrguer e responsivo */
+#hamburger-root { z-index: 99; }
+#hamburger-btn {
+  position: fixed; top: 22px; right: 28px;
+  width: 54px; height: 54px;
+  background: rgba(13,27,48,0.96);
+  border: none; border-radius: 19px;
+  box-shadow: none;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  cursor: pointer; z-index: 100;
+  transition: background 0.18s;
+}
+#hamburger-btn:focus { outline: 3px solid #00bfffbb; }
+.hamb-bar {
+  width: 30px; height: 4px; border-radius: 2px; margin: 6px 0;
+  background: #00a1de;
+  transition: all 0.25s;
+}
+#hamburger-btn.active .hamb-bar:nth-child(1) {
+  transform: rotate(45deg) translate(8px,8px);
+  background: #00eaff;
+}
+#hamburger-btn.active .hamb-bar:nth-child(2) { opacity: 0; }
+#hamburger-btn.active .hamb-bar:nth-child(3) {
+  transform: rotate(-45deg) translate(8px,-8px);
+  background: #00eaff;
+}
+#side-menu {
+  position: fixed; top: 74px; right: 28px;
+  width: 240px; height: calc(100vh - 74px);
+  background: linear-gradient(135deg,#001c37 20%,#003969cc 85%);
+  border-radius: 22px; box-shadow: 0 0 36px #005783bb;
+  padding: 30px 24px; opacity: 0; pointer-events: none; transform: translateY(-10px) scale(0.97);
+  transition: opacity 0.23s, transform 0.23s, box-shadow 0.23s; z-index: 95;
+  display: flex; flex-direction: column; backdrop-filter: blur(8px); border: 1px solid #0081d129;
+}
+#side-menu.active {
+  opacity: 1; pointer-events: auto; transform: translateY(0) scale(1);
+  box-shadow: 0 0 48px #00aaffcc;
+}
+#side-menu ul {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 28px; flex: 1;
+}
+#side-menu li { padding: 0; }
+#side-menu a, #side-menu .menu-btn {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 1.15rem; font-weight: 600; padding: 16px 20px;
+  background: linear-gradient(90deg,#004a81 40%,#00a7ffbb 85%);
+  border-radius: 18px; color: #cff3ff;
+  box-shadow: 0 6px 22px rgba(0,131,191,0.42); border: none; cursor: pointer;
+  transition: background 0.22s, color 0.3s, transform 0.25s, box-shadow 0.25s;
+  text-align: left;
+}
+#side-menu a:hover, #side-menu .menu-btn:hover,
+#side-menu a:focus, #side-menu .menu-btn:focus {
+  background: linear-gradient(90deg,#00cfff 65%,#0063a0 90%);
+  color: #002b49; box-shadow: 0 0 26px #00cfffbd, 0 0 14px #006fabb0;
+  outline: none; transform: scale(1.08);
+}
+#side-menu svg {
+  fill: #00bfff; height: 22px; width: 22px; flex-shrink: 0;
+}
+#social-dialog {
+  position: fixed; top: 74px; right: 280px;
+  min-width: 220px; max-width: 320px; padding: 30px 22px;
+  background: rgba(13,27,62,0.97); color: #e0f7ff;
+  border: none; border-radius: 24px; box-shadow: 0 0 32px #00caffcc;
+  animation: fadein 0.25s; z-index: 100; font-size: 1rem;
+}
+#social-dialog h3 { margin-top: 0; font-size: 1.3rem; margin-bottom: 14px; color: #00caff; font-weight: 700; }
+#social-dialog a {
+  display: block; color: #00caff; margin-bottom: 14px; font-weight: 600;
+  text-decoration: none; background: #002844; border-radius: 10px; padding: 10px 15px;
+  box-shadow: 0 0 20px #00aaff33; transition: background 0.2s;
+}
+#social-dialog a:hover { background: #0089ff45; }
+#social-dialog button {
+  margin-top: 12px; border: none; border-radius: 16px; padding: 8px 22px;
+  background: #00bfff; color: white; font-weight: 600; cursor: pointer;
+  box-shadow: 0 0 10px #00aaffcc; font-size: 1rem;
+}
+@keyframes fadein { from { opacity: 0; transform: scale(0.88); } to { opacity: 1; transform: scale(1); } }
+@media (max-width:700px) {
+  #hamburger-btn { width: 40px; height: 40px; right: 12px; top: 14px; }
+  #side-menu { width: 90vw; right: 12px; top: 62px; height: calc(100vh - 62px); border-radius: 25px; padding: 30px 18px; }
+  #social-dialog { right: 27px; top: 62px; max-width: 90vw; }
+  .title { font-size: 1.6rem; }
+  .subtitle { font-size: 1.04rem; }
+  .cards-vert-grid { grid-template-columns: 1fr; padding: 22px 14px; max-width: 95vw; }
+  .card { min-width: 85vw; padding: 12px 10px; }
+  footer { font-size: 1rem; }
+}
+</style>
 </head>
 <body>
-  <header>
-    <nav>
-      <ul>
-        <li><a href="                   
-        <li><a href="#">Apps</a></li>
-        <li><a href="                 
-        <li><a href="#">Contato</a></li>
-      </ul>
-    </nav>
-  </header>
-  <main>
-    <section class="hero">
-      <h1>Sefer</h1>
-      <p>Hub de apps e jogos para brasileiros</p>
-    </section>
-    <section class="cards">
-      <div class="card">
-        <h2>Aplicativos premium</h2>
-        <p>Descubra os melhores aplicativos</p>
+<div id="hamburger-root">
+  <button id="hamburger-btn" aria-label="Abrir menu" aria-expanded="false" aria-controls="side-menu">
+    <span class="hamb-bar"></span>
+    <span class="hamb-bar"></span>
+    <span class="hamb-bar"></span>
+  </button>
+  <nav id="side-menu" aria-hidden="true" role="navigation">
+    <ul>
+      <li>
+        <a href="index.html" tabindex="0">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 12l18-12v24z"/></svg>
+          Voltar para tela inicial
+        </a>
+      </li>
+      <li>
+        <button id="suporte-btn" class="menu-btn" tabindex="0" aria-label="Enviar e-mail para suporte da Nexus">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 3h20v18H2z"/></svg>
+          Suporte
+        </button>
+      </li>
+      <li>
+        <button id="apoiadores-btn" class="menu-btn" tabindex="0" aria-label="Mostrar redes sociais e apoiadores da Nexus">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2a10 10 0 0 1 0 20 10 10 0 0 1 0-20z"/></svg>
+          Apoiadores
+        </button>
+      </li>
+    </ul>
+  </nav>
+  <dialog id="social-dialog" role="dialog" aria-modal="true" aria-labelledby="social-dialog-title" tabindex="-1">
+    <h3 id="social-dialog-title">Acesse as redes da Nexus e apoiadores</h3>
+    <a href="https://t.me/NexusLock" target="_blank" rel="noopener" tabindex="0">Canal Telegram da Nexus</a>
+    <a href="https://www.instagram.com/hypexsolos?igsh=dng5ZWtrcHdmY2Vq" target="_blank" rel="noopener" tabindex="0">Hypex - Instagram</a>
+    <a href="https://www.instagram.com/void._vamp?igsh=MmY4eWhlOGF4cjFl" target="_blank" rel="noopener" tabindex="0">void - Instagram</a>
+    <button onclick="document.getElementById('social-dialog').close()" tabindex="0">Fechar</button>
+  </dialog>
+</div>
+<canvas id="cparticles"></canvas>
+<div class="container">
+  <h1 class="title">SEFER</h1>
+  <p class="subtitle">Bem-vindo à sua plataforma</p>
+  <main class="cards-vert-grid" role="main" aria-label="lista de categorias">
+    <a href="premium.html" class="card" aria-label="Aplicativos Premium" tabindex="0">
+      <img class="card-img" src="imgindex/card1.jpg" alt="Aplicativos Premium" />
+      <div class="card-text">
+        <div class="card-title">Aplicativos Premium</div>
+        <div class="card-desc">Seguro</div>
       </div>
-      <div class="card">
-        <h2>Jogos</h2>
-        <p>Encontre os melhores jogos</p>
+    </a>
+    <a href="jogos.html" class="card" aria-label="Jogos" tabindex="0">
+      <img class="card-img" src="imgindex/card2.jpg" alt="Jogos" />
+      <div class="card-text">
+        <div class="card-title">Jogos</div>
+        <div class="card-desc">Seguro</div>
       </div>
-      <div class="card">
-        <h2>Scripts e métodos</h2>
-        <p>Recursos para desenvolvedores</p>
+    </a>
+    <a href="desempenho.html" class="card" aria-label="Desempenho" tabindex="0">
+      <img class="card-img" src="imgindex/card3.jpg" alt="Desempenho" />
+      <div class="card-text">
+        <div class="card-title">Desempenho</div>
+        <div class="card-desc">Funcional</div>
       </div>
-      <div class="card">
-        <h2>Comunidade</h2>
-        <p>Participe da nossa comunidade</p>
+    </a>
+    <a href="whatsapp.html" class="card" aria-label="Métodos para WhatsApp" tabindex="0">
+      <img class="card-img" src="imgindex/card4.jpg" alt="WhatsApp" />
+      <div class="card-text">
+        <div class="card-title">Métodos para WhatsApp</div>
+        <div class="card-desc">Funcional</div>
       </div>
-    </section>
+    </a>
+    <a href="melhoresvideospornos.html" class="card" aria-label="Conteúdos adultos" tabindex="0">
+      <img class="card-img" src="imgindex/card5.jpg" alt="Conteúdos adultos" />
+      <div class="card-text">
+        <div class="card-title">Conteúdos adultos</div>
+        <div class="card-desc">Entretenimento vip</div>
+      </div>
+    </a>
+    <a href="escriptseroblox.html" class="card" aria-label="Scripts e executores para Roblox" tabindex="0">
+      <img class="card-img" src="imgindex/card6.jpg" alt="Roblox" />
+      <div class="card-text">
+        <div class="card-title">Scripts e executores para Roblox</div>
+        <div class="card-desc">Funcional</div>
+      </div>
+    </a>
+    <a href="livros.html" class="card" aria-label="Livros pagos de graça" tabindex="0">
+      <img class="card-img" src="imgindex/card7.jpg" alt="Livros pagos de graça" />
+      <div class="card-text">
+        <div class="card-title">Livros pagos de graça</div>
+        <div class="card-desc">Acesso vip</div>
+      </div>
+    </a>
   </main>
-  <footer>
-    <p>&copy; 2025 Sefer. Feito com carinho no Brasil.</p>
-  </footer>
+  <footer>desenvolvido pela associação Nexus</footer>
+</div>
+<script>
+(function(){
+  const count = 40;
+  const canvas = document.createElement('canvas');
+  canvas.id = 'cparticles';
+  canvas.style.position = 'fixed';
+  canvas.style.inset = '0';
+  canvas.style.zIndex = '0';
+  canvas.style.pointerEvents = 'none';
+  document.body.prepend(canvas);
+  const ctx = canvas.getContext('2d');
+  let w, h, particles;
+  function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  function init(){
+    resize();
+    particles = [];
+    for(let i=0;i<count;i++){
+      particles.push({
+        x: Math.random()*w,
+        y: Math.random()*h,
+        r: 2+Math.random()*8,
+        vx: (Math.random()-0.5)*0.2,
+        vy: (Math.random()-0.5)*0.2,
+        alpha: 0.2+Math.random()*0.4
+      });
+    }
+    requestAnimationFrame(loop);
+  }
+  function loop(){
+    ctx.clearRect(0,0,w,h);
+    for(const p of particles){
+      p.x += p.vx;
+      p.y += p.vy;
+      if(p.x<0) p.x = w;
+      if(p.x>w) p.x = 0;
+      if(p.y<0) p.y = h;
+      if(p.y>h) p.y = 0;
+      const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*6);
+      g.addColorStop(0, 'rgba(0,191,255,'+p.alpha+')');
+      g.addColorStop(0.6, 'rgba(46,163,255,'+(p.alpha*0.9)+')');
+      g.addColorStop(1, 'rgba(46,163,255,0)');
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = g;
+      ctx.shadowBlur = 17;
+      ctx.shadowColor = 'rgba(0,191,255,0.2)';
+      ctx.globalAlpha = 0.9;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    requestAnimationFrame(loop);
+  }
+  window.addEventListener('resize', resize);
+  init();
+})();
+const hamburgerBtn = document.getElementById('hamburger-btn');
+const sideMenu = document.getElementById('side-menu');
+const socialDialog = document.getElementById('social-dialog');
+const suporteBtn = document.getElementById('suporte-btn');
+const apoiadoresBtn = document.getElementById('apoiadores-btn');
+hamburgerBtn.onclick = function() {
+  hamburgerBtn.classList.toggle('active');
+  if (!sideMenu.classList.contains('active')) {
+    sideMenu.classList.add('active');
+    sideMenu.setAttribute('aria-hidden', 'false');
+  } else {
+    sideMenu.classList.remove('active');
+    sideMenu.setAttribute('aria-hidden', 'true');
+    socialDialog.close();
+  }
+};
+suporteBtn.onclick = function() {
+  window.location.href = "mailto:associacaonexugrup@gmail.com";
+};
+apoiadoresBtn.onclick = function() {
+  socialDialog.showModal();
+};
+document.addEventListener('click', function(event) {
+  if (!sideMenu.contains(event.target) && !hamburgerBtn.contains(event.target)) {
+    if (sideMenu.classList.contains('active')) {
+      sideMenu.classList.remove('active');
+      sideMenu.setAttribute('aria-hidden', 'true');
+      hamburgerBtn.classList.remove('active');
+      socialDialog.close();
+    }
+  }
+});
+</script>
 </body>
 </html>
