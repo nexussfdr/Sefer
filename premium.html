@@ -361,58 +361,8 @@
       </header>
 
       <div class="apps-list">
-        <!-- MODELO DE APP 1 -->
-        <article class="app-card">
-          <img src="imgpro/card1.jpg" alt="Disney" class="app-icon">
-          <div class="app-info">
-            <div class="app-name">Disney+</div>
-            <div class="app-meta">
-              Versão modificada • Sem anúncios <span class="app-badge">Seguro</span>
-            </div>
-          </div>
-          <div class="app-actions">
-            <a href="https://fir3.net/iykFxG2C" target="_blank" rel="noopener noreferrer" class="btn-download">
-              Baixar
-            </a>
-            <span class="btn-tag">MediaFire</span>
-          </div>
-        </article>
-
-        <!-- MODELO DE APP 2 -->
-        <article class="app-card">
-          <img src="imgpro/card2.jpg" alt="YouTube" class="app-icon">
-          <div class="app-info">
-            <div class="app-name">YouTube Premium</div>
-            <div class="app-meta">
-              Vídeos sem anúncios • Background <span class="app-badge">Seguro</span>
-            </div>
-          </div>
-          <div class="app-actions">
-            <a href="https://fir3.net/q9pF4" target="_blank" rel="noopener noreferrer" class="btn-download">
-              Baixar
-            </a>
-            <span class="btn-tag">MediaFire</span>
-          </div>
-        </article>
-
-        <!-- MODELO DE APP 3 -->
-        <article class="app-card">
-          <img src="imgpro/card3.jpg" alt="MicroG" class="app-icon">
-          <div class="app-info">
-            <div class="app-name">MicroG</div>
-            <div class="app-meta">
-              Integração para apps YouTube mod <span class="app-badge">Obrigatório</span>
-            </div>
-          </div>
-          <div class="app-actions">
-            <a href="https://4br.me/eqapn" target="_blank" rel="noopener noreferrer" class="btn-download">
-              Baixar
-            </a>
-            <span class="btn-tag">MediaFire</span>
-          </div>
-        </article>
-
-        <!-- AQUI VOCÊ PODE DUPLICAR OS app-card PARA OS OUTROS APPS -->
+        <!-- por enquanto os cards continuam fixos -->
+        <!-- depois vamos trocar para buscar na tabela apps -->
       </div>
     </section>
 
@@ -451,6 +401,7 @@
         requestAnimationFrame(loop);
       }
       function loop(){
+        const ctx = canvas.getContext('2d');
         ctx.clearRect(0,0,w,h);
         for(const p of particles){
           p.x += p.vx;
@@ -515,5 +466,9 @@
       }
     });
   </script>
+
+  <!-- Supabase -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="js/supabaseClient.js"></script>
 </body>
 </html>
