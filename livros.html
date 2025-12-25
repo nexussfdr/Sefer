@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Livros pagos de graça</title>
+<style>
+html, body {
+  min-height: 100vh; margin: 0; padding: 0;
+  background: #0a142c; font-family: 'Poppins', Arial, sans-serif;
+  color: #e0e7f1; box-sizing: border-box;
+  width: 100vw; overflow-x: hidden;
+}
+body {
+  min-width: 100vw; min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+}
+#cparticles {
+  position: fixed; top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none; z-index: 0;
+}
+.container {
+  z-index: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  width: 100vw; min-height: 100vh;
+}
+.title {
+  font-size: 2.4rem; color: #00bfff;
+  text-shadow: 0 0 18px #00bfffDD;
+  font-weight: bold; text-align: center;
+  margin-top: 60px; margin-bottom: 0.5rem; width: 100%;
+}
+.subtitle {
+  color: #8ec1ff; font-size: 1.05rem; font-weight: 400;
+  text-align: center; margin-bottom: 2rem; margin-top: 0;
+  width: 100%;
+}
+
+/* GRID DE CARDS – IGUAL OUTRAS TELAS */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 24px;
+  align-items: stretch;
+  justify-content: center;
+  background: rgba(6,15,32,0.9);
+  border-radius: 20px;
+  box-shadow: 0 0 32px rgba(0,191,255,0.18);
+  padding: 28px 18px;
+  max-width: 520px;
+  margin: 0 auto 32px auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* CARD QUADRADO NEON */
+.card {
+  background: rgba(4,25,55,0.95);
+  border-radius: 16px;
+  border: 1.5px solid rgba(0,191,255,0.55);
+  box-shadow: 0 0 24px rgba(0,191,255,0.5);
+  padding: 26px 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #e5f4ff;
+  text-decoration: none;
+  min-height: 120px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 40px rgba(0,212,255,0.9);
+  border-color: #00e0ff;
+}
+.card-title {
+  font-size: 1.0rem;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+  color: #e9f6ff;
+}
+.card-desc {
+  font-size: 0.9rem;
+  color: #a8d6ff;
+  margin: 0;
+}
+
+footer {
+  text-align: center; margin-top: 40px;
+  color: #fff; font-weight: bold; font-size: 1.05rem;
+  width: 100vw;
+}
+
+/* MENU HAMBÚRGUER + DIALOG APOIADORES (MESMO DAS OUTRAS PÁGINAS) */
+#hamburger-root { z-index: 99; }
+#hamburger-btn {
+  position: fixed; top: 22px; right: 28px;
+  width: 54px; height: 54px;
+  background: rgba(13,27,48,0.96);
+  border: none; border-radius: 19px;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  cursor: pointer; z-index: 100;
+  transition: background 0.18s;
+}
+#hamburger-btn:focus { outline: 3px solid #00bfffbb; }
+.hamb-bar {
+  width: 30px; height: 4px; border-radius: 2px; margin: 6px 0;
+  background: #00a1de;
+  transition: all 0.25s;
+}
+#hamburger-btn.active .hamb-bar:nth-child(1) {
+  transform: rotate(45deg) translate(8px,8px);
+  background: #00eaff;
+}
+#hamburger-btn.active .hamb-bar:nth-child(2) { opacity: 0; }
+#hamburger-btn.active .hamb-bar:nth-child(3) {
+  transform: rotate(-45deg) translate(8px,-8px);
+  background: #00eaff;
+}
+#side-menu {
+  position: fixed; top: 74px; right: 28px;
+  width: 240px; height: calc(100vh - 74px);
+  background: linear-gradient(135deg,#001c37 20%,#003969cc 85%);
+  border-radius: 22px; box-shadow: 0 0 36px #005783bb;
+  padding: 30px 24px; opacity: 0; pointer-events: none; transform: translateY(-10px) scale(0.97);
+  transition: opacity 0.23s, transform 0.23s, box-shadow 0.23s; z-index: 95;
+  display: flex; flex-direction: column; backdrop-filter: blur(8px); border: 1px solid #0081d129;
+}
+#side-menu.active {
+  opacity: 1; pointer-events: auto; transform: translateY(0) scale(1);
+  box-shadow: 0 0 48px #00aaffcc;
+}
+#side-menu ul {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 28px; flex: 1;
+}
+#side-menu li { padding: 0; }
+#side-menu a, #side-menu .menu-btn {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 1.15rem; font-weight: 600; padding: 16px 20px;
+  background: linear-gradient(90deg,#004a81 40%,#00a7ffbb 85%);
+  border-radius: 18px; color: #cff3ff;
+  box-shadow: 0 6px 22px rgba(0,131,191,0.42); border: none; cursor: pointer;
+  transition: background 0.22s, color 0.3s, transform 0.25s, box-shadow 0.25s;
+  text-align: left;
+}
+#side-menu a:hover, #side-menu .menu-btn:hover,
+#side-menu a:focus, #side-menu .menu-btn:focus {
+  background: linear-gradient(90deg,#00cfff 65%,#0063a0 90%);
+  color: #002b49; box-shadow: 0 0 26px #00cfffbd, 0 0 14px #006fabb0;
+  outline: none; transform: scale(1.08);
+}
+#side-menu svg {
+  fill: #00bfff; height: 22px; width: 22px; flex-shrink: 0;
+}
+
+/* dialog de apoiadores */
+#social-dialog {
+  position: fixed; top: 74px; right: 280px;
+  min-width: 220px; max-width: 320px; padding: 30px 22px;
+  background: rgba(13,27,62,0.97); color: #e0f7ff;
+  border: none; border-radius: 24px; box-shadow: 0 0 32px #00caffcc;
+  animation: fadein 0.25s; z-index: 100; font-size: 1rem;
+}
+#social-dialog h3 { margin-top: 0; font-size: 1.3rem; margin-bottom: 14px; color: #00caff; font-weight: 700; }
+#social-dialog a {
+  display: block; color: #00caff; margin-bottom: 14px; font-weight: 600;
+  text-decoration: none; background: #002844; border-radius: 10px; padding: 10px 15px;
+  box-shadow: 0 0 20px #00aaff33; transition: background 0.2s;
+}
+#social-dialog a:hover { background: #0089ff45; }
+#social-dialog button {
+  margin-top: 12px; border: none; border-radius: 16px; padding: 8px 22px;
+  background: #00bfff; color: white; font-weight: 600; cursor: pointer;
+  box-shadow: 0 0 10px #00aaffcc; font-size: 1rem;
+}
+
+@keyframes fadein { from { opacity: 0; transform: scale(0.88); } to { opacity: 1; transform: scale(1); } }
+@media (max-width:700px) {
+  #hamburger-btn { width: 40px; height: 40px; right: 12px; top: 14px; }
+  #side-menu { width: 90vw; right: 12px; top: 62px; height: calc(100vh - 62px); border-radius: 25px; padding: 30px 18px; }
+  #social-dialog { right: 27px; top: 62px; max-width: 90vw; }
+  .title { font-size: 1.7rem; }
+  .subtitle { font-size: 0.98rem; }
+  .cards-grid { grid-template-columns: 1fr; padding: 22px 14px; max-width: 95vw; }
+}
+</style>
+</head>
+<body>
+<div id="hamburger-root">
+  <button id="hamburger-btn" aria-label="Abrir menu" aria-expanded="false" aria-controls="side-menu">
+    <span class="hamb-bar"></span>
+    <span class="hamb-bar"></span>
+    <span class="hamb-bar"></span>
+  </button>
+  <nav id="side-menu" aria-hidden="true" role="navigation">
+    <ul>
+      <li>
+        <a href="index.html" tabindex="0">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 12l18-12v24z"/></svg>
+          Voltar para tela inicial
+        </a>
+      </li>
+      <li>
+        <button id="suporte-btn" class="menu-btn" tabindex="0" aria-label="Enviar e-mail para suporte da Nexus">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 3h20v18H2z"/></svg>
+          Suporte
+        </button>
+      </li>
+      <li>
+        <button id="apoiadores-btn" class="menu-btn" tabindex="0" aria-label="Mostrar redes sociais e apoiadores da Nexus">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2a10 10 0 0 1 0 20 10 10 0 0 1 0-20z"/></svg>
+          Apoiadores
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <dialog id="social-dialog" role="dialog" aria-modal="true" aria-labelledby="social-dialog-title" tabindex="-1">
+    <h3 id="social-dialog-title">Acesse as redes da Nexus e apoiadores</h3>
+    <a href="https://t.me/NexusLock" target="_blank" rel="noopener" tabindex="0">Canal Telegram da Nexus</a>
+    <a href="https://www.instagram.com/hypexsolos?igsh=dng5ZWtrcHdmY2Vq" target="_blank" rel="noopener" tabindex="0">Hypex - Instagram</a>
+    <a href="https://www.instagram.com/void._vamp?igsh=MmY4eWhlOGF4cjFl" target="_blank" rel="noopener" tabindex="0">void - Instagram</a>
+    <button onclick="document.getElementById('social-dialog').close()" tabindex="0">Fechar</button>
+  </dialog>
+</div>
+
+<canvas id="cparticles"></canvas>
+<div class="container">
+  <h1 class="title">Livros pagos de graça</h1>
+  <p class="subtitle">Seleção de livros com acesso vip</p>
+
+  <main class="cards-grid" role="main" aria-label="lista de livros">
+    <a href="https://4br.me/EjNwFZx" class="card" target="_blank" rel="noopener">
+      <div class="card-title">Você nasceu rico</div>
+      <div class="card-desc">acesso vip</div>
+    </a>
+    <a href="https://4br.me/0q7M" class="card" target="_blank" rel="noopener">
+      <div class="card-title">Quem pensa Enriquece</div>
+      <div class="card-desc">acesso vip</div>
+    </a>
+    <a href="https://4br.me/IoCN" class="card" target="_blank" rel="noopener">
+      <div class="card-title">Pai rico pai pobre</div>
+      <div class="card-desc">acesso vip</div>
+    </a>
+    <a href="https://4br.me/vyLe2aHs" class="card" target="_blank" rel="noopener">
+      <div class="card-title">Homem mais rico da Babilônia</div>
+      <div class="card-desc">acesso vip</div>
+    </a>
+    <a href="https://4br.me/oSnf3" class="card" target="_blank" rel="noopener">
+      <div class="card-title">Negocie como se sua vida dependesse disso</div>
+      <div class="card-desc">acesso vip</div>
+    </a>
+    <a href="https://4br.me/ESuOl4YPl" class="card" target="_blank" rel="noopener">
+      <div class="card-title">O poder da manipulação</div>
+      <div class="card-desc">acesso vip</div>
+    </a>
+    <a href="https://4br.me/JPjeeOxK" class="card" target="_blank" rel="noopener">
+      <div class="card-title">Como convencer alguém em 90 segundos</div>
+      <div class="card-desc">acesso vip</div>
+    </a>
+    <a href="https://4br.me/py5W" class="card" target="_blank" rel="noopener">
+      <div class="card-title">As 48 leis do poder</div>
+      <div class="card-desc">acesso vip</div>
+    </a>
+    <a href="https://4br.me/NUhIR" class="card" target="_blank" rel="noopener">
+      <div class="card-title">A arte de enganar</div>
+      <div class="card-desc">acesso vip</div>
+    </a>
+  </main>
+
+  <footer>desenvolvido pela associação Nexus</footer>
+</div>
+
+<script>
+(function(){
+  const count = 40;
+  const canvas = document.getElementById('cparticles');
+  const ctx = canvas.getContext('2d');
+  let w, h, particles;
+  function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  function init(){
+    resize();
+    particles = [];
+    for(let i=0;i<count;i++){
+      particles.push({
+        x: Math.random()*w,
+        y: Math.random()*h,
+        r: 2+Math.random()*8,
+        vx: (Math.random()-0.5)*0.2,
+        vy: (Math.random()-0.5)*0.2,
+        alpha: 0.2+Math.random()*0.4
+      });
+    }
+    requestAnimationFrame(loop);
+  }
+  function loop(){
+    ctx.clearRect(0,0,w,h);
+    for(const p of particles){
+      p.x += p.vx;
+      p.y += p.vy;
+      if(p.x<0) p.x = w;
+      if(p.x>w) p.x = 0;
+      if(p.y<0) p.y = h;
+      if(p.y>h) p.y = 0;
+      const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*6);
+      g.addColorStop(0, 'rgba(0,191,255,'+p.alpha+')');
+      g.addColorStop(0.6, 'rgba(46,163,255,'+(p.alpha*0.9)+')');
+      g.addColorStop(1, 'rgba(46,163,255,0)');
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = g;
+      ctx.shadowBlur = 17;
+      ctx.shadowColor = 'rgba(0,191,255,0.2)';
+      ctx.globalAlpha = 0.9;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    requestAnimationFrame(loop);
+  }
+  window.addEventListener('resize', resize);
+  init();
+})();
+
+const hamburgerBtn = document.getElementById('hamburger-btn');
+const sideMenu = document.getElementById('side-menu');
+const socialDialog = document.getElementById('social-dialog');
+const suporteBtn = document.getElementById('suporte-btn');
+const apoiadoresBtn = document.getElementById('apoiadores-btn');
+
+hamburgerBtn.onclick = function() {
+  hamburgerBtn.classList.toggle('active');
+  if (!sideMenu.classList.contains('active')) {
+    sideMenu.classList.add('active');
+    sideMenu.setAttribute('aria-hidden', 'false');
+  } else {
+    sideMenu.classList.remove('active');
+    sideMenu.setAttribute('aria-hidden', 'true');
+    socialDialog.close();
+  }
+};
+
+suporteBtn.onclick = function() {
+  window.location.href = "mailto:associacaonexugrup@gmail.com";
+};
+
+apoiadoresBtn.onclick = function() {
+  socialDialog.showModal();
+};
+
+document.addEventListener('click', function(event) {
+  if (!sideMenu.contains(event.target) && !hamburgerBtn.contains(event.target)) {
+    if (sideMenu.classList.contains('active')) {
+      sideMenu.classList.remove('active');
+      sideMenu.setAttribute('aria-hidden', 'true');
+      hamburgerBtn.classList.remove('active');
+      socialDialog.close();
+    }
+  }
+});
+</script>
+</body>
+</html>
